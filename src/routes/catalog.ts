@@ -1,0 +1,1 @@
+import type { FastifyInstance } from 'fastify'; import { frame, geofences, robots } from '../domain/state.js'; export async function registerCatalogRoutes(app: FastifyInstance) { app.get('/api/frame', async () => frame); app.get('/api/robots', async () => robots); app.get('/api/geofences', async () => geofences); }
