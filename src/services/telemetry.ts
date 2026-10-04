@@ -1,0 +1,3 @@
+import { latestTelemetryByMission, telemetry } from '../domain/state.js'; import type { Telemetry } from '../domain/types.js';
+// 水下链路乱序/重复：原始日志只追加用于审计；任务最新状态按 timeMs 单调推进，重复或时间倒退不覆盖。
+export function recordTelemetry(t: Telemetry): Telemetry & { state: 'accepted' | 'duplicate' | 'stale' } { telemetry.push(t); const latest = latestTelemetryByMission.get(t.missionId); if (latest && t.timeMs === latest.timeMs) return { ...t, state: 'duplicate' }; if (latest && t.timeMs < latest.timeMs) return { ...t, state: 'stale' }; latestTelemetryByMission.set(t.missionId, t); return { ...t, state: 'accepted' }; } export function latestTelemetry(missionId: string): Telemetry | undefined { return latestTelemetryByMission.get(missionId); }
